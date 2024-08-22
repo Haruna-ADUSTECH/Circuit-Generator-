@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circuit Generator</title>
+    <style>
+        /* Add some basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .circuit-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        #circuit {
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 300px;
+            height: 300px;
+            text-align: center;
+        }
+        label, input, select {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Circuit Generator</h1>
+
+<form id="circuitForm">
+    <label for="resistor">Resistor (R):</label>
+    <input type="number" id="resistor" name="resistor" step="0.01" placeholder="Enter value for R in ohms">
+
+    <label for="capacitor">Capacitor (C):</label>
+    <input type="number" id="capacitor" name="capacitor" step="0.01" placeholder="Enter value for C in farads">
+
+    <label for="inductor">Inductor (L):</label>
+    <input type="number" id="inductor" name="inductor" step="0.01" placeholder="Enter value for L in henrys">
+
+    <label for="circuitType">Circuit Type:</label>
+    <select id="circuitType" name="circuitType">
+        <option value="series">Series</option>
+        <option value="parallel">Parallel</option>
+    </select>
+
+    <label for="sourceType">Source Type:</label>
+    <select id="sourceType" name="sourceType">
+        <option value="none">None</option>
+        <option value="voltage">Voltage Source</option>
+        <option value="current">Current Source</option>
+    </select>
+
+    <button type="button" onclick="generateCircuit()">Generate Circuit</button>
+</form>
+
+<div class="circuit-container">
+    <canvas id="circuit" width="400" height="400"></canvas>
+</div>
+
+<button id="downloadBtn" style="display: none;" onclick="downloadImage()">Download Circuit as Image</button>
+
+<script src="circuit.js"></script>
+
+</body>
+</html>
