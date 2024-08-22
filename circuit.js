@@ -11,84 +11,83 @@ function generateCircuit() {
     // Clear previous drawing
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    let startX = 50;
+    let startY = 200;
+
     // Draw the source if selected
     if (sourceType !== "none") {
         ctx.beginPath();
         if (sourceType === "voltage") {
-            ctx.arc(50, 200, 20, 0, 2 * Math.PI);
-            ctx.fillText("V", 45, 205);
+            ctx.arc(startX, startY, 20, 0, 2 * Math.PI);
+            ctx.fillText("+", startX - 15, startY - 15);
+            ctx.fillText("-", startX - 15, startY + 25);
         } else if (sourceType === "current") {
-            ctx.moveTo(50, 180);
-            ctx.lineTo(50, 220);
-            ctx.lineTo(70, 200);
-            ctx.closePath();
-            ctx.fill();
-            ctx.fillText("I", 45, 205);
+            ctx.arc(startX, startY, 20, 0, 2 * Math.PI);
+            ctx.moveTo(startX - 10, startY - 10);
+            ctx.lineTo(startX + 10, startY + 10);
+            ctx.moveTo(startX - 10, startY + 10);
+            ctx.lineTo(startX + 10, startY - 10);
         }
         ctx.stroke();
+        startX += 50;
     }
 
-    // Draw the circuit elements
-    let startX = 100;
+    // Draw components based on user input
+    if (circuitType === "series") {
+        if (R) {
+            drawResistor(ctx, startX, startY);
+            startX += 100;
+        }
+        if (C) {
+            drawCapacitor(ctx, startX, startY);
+            startX += 100;
+        }
+        if (L) {
+            drawInductor(ctx, startX, startY);
+            startX += 100;
+        }
+    } else if (circuitType === "parallel") {
+        let components = [];
+        if (R) components.push(drawResistor);
+        if (C) components.push(drawCapacitor);
+        if (L) components.push(drawInductor);
 
-    if (R) {
-        drawResistor(ctx, startX, 200, circuitType);
-        startX += 100;
-    }
-
-    if (C) {
-        drawCapacitor(ctx, startX, 200, circuitType);
-        startX += 100;
-    }
-
-    if (L) {
-        drawInductor(ctx, startX, 200, circuitType);
-        startX += 100;
+        components.forEach((drawComponent, index) => {
+            drawComponent(ctx, startX + index * 50, startY - 50 + index * 50);
+        });
     }
 
     // Show download button if a circuit is generated
     document.getElementById('downloadBtn').style.display = (R || C || L) ? "block" : "none";
 }
 
-function drawResistor(ctx, x, y, type) {
+function drawResistor(ctx, x, y) {
     ctx.beginPath();
-    if (type === "series") {
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + 50, y);
-    } else {
-        ctx.moveTo(x, y - 30);
-        ctx.lineTo(x, y + 30);
-    }
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + 25, y - 20);
+    ctx.lineTo(x + 50, y + 20);
+    ctx.lineTo(x + 75, y - 20);
+    ctx.lineTo(x + 100, y);
     ctx.stroke();
-    ctx.fillText("R", x + 25, y - 10);
+    ctx.fillText("R", x + 45, y - 30);
 }
 
-function drawCapacitor(ctx, x, y, type) {
+function drawCapacitor(ctx, x, y) {
     ctx.beginPath();
-    if (type === "series") {
-        ctx.moveTo(x, y - 10);
-        ctx.lineTo(x, y + 10);
-        ctx.moveTo(x + 20, y - 10);
-        ctx.lineTo(x + 20, y + 10);
-    } else {
-        ctx.moveTo(x, y - 30);
-        ctx.lineTo(x + 50, y - 30);
-        ctx.moveTo(x, y + 30);
-        ctx.lineTo(x + 50, y + 30);
-    }
+    ctx.moveTo(x, y - 20);
+    ctx.lineTo(x, y + 20);
+    ctx.moveTo(x + 30, y - 20);
+    ctx.lineTo(x + 30, y + 20);
     ctx.stroke();
-    ctx.fillText("C", x + 10, y - 10);
+    ctx.fillText("C", x + 15, y - 30);
 }
 
-function drawInductor(ctx, x, y, type) {
+function drawInductor(ctx, x, y) {
     ctx.beginPath();
-    if (type === "series") {
-        ctx.arc(x + 25, y, 20, Math.PI, 0, true);
-    } else {
-        ctx.arc(x, y - 30, 20, 0, 2 * Math.PI);
-    }
+    ctx.arc(x + 20, y, 20, Math.PI, 0, false);
+    ctx.arc(x + 60, y, 20, Math.PI, 0, false);
     ctx.stroke();
-    ctx.fillText("L", x + 20, y - 10);
+    ctx.fillText("L", x + 35, y - 30);
 }
 
 function downloadImage() {
@@ -97,4 +96,4 @@ function downloadImage() {
     link.download = 'circuit.png';
     link.href = canvas.toDataURL();
     link.click();
-          }
+            }
